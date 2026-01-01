@@ -1,4 +1,4 @@
-class d extends HTMLElement {
+class u extends HTMLElement {
   $audio;
   playlist = [];
   muxedBlobUrl = null;
@@ -30,24 +30,26 @@ class d extends HTMLElement {
   async loadAndMuxPlaylist(t) {
     try {
       this.updateStatus("Loading playlist...");
-      const r = await (await fetch(t)).json();
-      this.playlist = r.files, console.log(`Found ${this.playlist.length} chunks to download and mux`), this.updateStatus(`Downloading ${this.playlist.length} chunks...`);
-      const a = [];
+      const o = this.getAttribute("customHeaders") ?? "{}", n = JSON.parse(o), l = await (await fetch(t, {
+        headers: n
+      })).json();
+      this.playlist = l.files, console.log(`Found ${this.playlist.length} chunks to download and mux`), this.updateStatus(`Downloading ${this.playlist.length} chunks...`);
+      const i = [];
       for (let e = 0; e < this.playlist.length; e++) {
         this.updateStatus(
           `Downloading chunk ${e + 1}/${this.playlist.length}...`
         );
-        const i = await fetch(this.playlist[e]);
-        if (!i.ok)
+        const a = await fetch(this.playlist[e]);
+        if (!a.ok)
           throw new Error(
-            `Failed to download chunk ${e + 1}: ${i.statusText}`
+            `Failed to download chunk ${e + 1}: ${a.statusText}`
           );
-        const n = await i.blob();
-        a.push(n), console.log(`Downloaded chunk ${e + 1}: ${n.size} bytes`);
+        const r = await a.blob();
+        i.push(r), console.log(`Downloaded chunk ${e + 1}: ${r.size} bytes`);
       }
       this.updateStatus("Muxing chunks into complete file...");
-      const l = new Blob(a, { type: "audio/webm" });
-      this.muxedBlobUrl = URL.createObjectURL(l), this.updateStatus("Ready to play"), this.$audio.src = this.muxedBlobUrl, console.log("Successfully muxed all chunks into single playable file"), this.dispatchEvent(new CustomEvent("ready"));
+      const d = new Blob(i, { type: "audio/webm" });
+      this.muxedBlobUrl = URL.createObjectURL(d), this.updateStatus("Ready to play"), this.$audio.src = this.muxedBlobUrl, console.log("Successfully muxed all chunks into single playable file"), this.dispatchEvent(new CustomEvent("ready"));
     } catch (o) {
       console.error("Error loading and muxing playlist:", o), this.updateStatus(
         `Error: ${o instanceof Error ? o.message : String(o)}`
@@ -75,12 +77,12 @@ class d extends HTMLElement {
     );
   }
 }
-function u(s = "json-audio-player") {
-  customElements.get(s) || customElements.define(s, d);
+function c(s = "json-audio-player") {
+  customElements.get(s) || customElements.define(s, u);
 }
-u();
+c();
 export {
-  d as JsonAudioPlayer,
-  u as defineJsonAudioPlayer
+  u as JsonAudioPlayer,
+  c as defineJsonAudioPlayer
 };
 //# sourceMappingURL=json-audio-player.js.map

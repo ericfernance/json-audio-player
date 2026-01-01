@@ -54,8 +54,12 @@ export class JsonAudioPlayer extends HTMLElement {
   async loadAndMuxPlaylist(manifestUrl: string): Promise<void> {
     try {
       this.updateStatus("Loading playlist...");
+      const customHeaders = this.getAttribute("customHeaders") ?? "{}";
+      const headers = JSON.parse(customHeaders);
 
-      const response = await fetch(manifestUrl);
+      const response = await fetch(manifestUrl, {
+        headers: headers,
+      });
       const manifest: PlaylistManifest = await response.json();
       this.playlist = manifest.files;
 
