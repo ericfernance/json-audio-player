@@ -99,7 +99,9 @@ export class JsonAudioPlayer extends HTMLElement {
       this.dispatchEvent(new CustomEvent("ready"));
     } catch (error) {
       console.error("Error loading and muxing playlist:", error);
-      this.updateStatus(`Error: ${error.message}`);
+      this.updateStatus(
+        `Error: ${error instanceof Error ? error.message : String(error)}`,
+      );
       this.dispatchEvent(new CustomEvent("error", { detail: error }));
     }
   }
